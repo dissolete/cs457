@@ -10,5 +10,9 @@ class Parser:
 
         #Read line by line
         for line in f:
-            print(line, end='')
+            # Skip line if its a comment or blank
+            if line.startswith("--") or line.isspace():
+                continue
+            else:
+                print(line, end="")
 
