@@ -1,3 +1,2 @@
-*.sql
 *.sh
 __pycache__/*
