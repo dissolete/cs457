@@ -24,26 +24,40 @@ class Instruction:
 
 class Parser:
 
-    def __init__(self, filename):
+    def __init__(self, usingFile, filename=""):
         self.instructions = []
+        self.singleInstruction = Instruction()
         self.instructionSet = filename
+        self.usingFile = usingFile
+
         
     def print(self):
-        for i in self.instructions:
+        if self.usingFile:
+            for i in self.instructions:
+                print("[{}\n primaryInstruction: {}\nsecondaryInstruction: {}\n attributes: {}\n tableUsed: {}\n database: {}\n attrPairs: {}\n".format(i.instructionLine,i.primaryInstruction, i.secondaryInstruction, i.attributes, i.tableUsed,i.database,i.attrPairs))
+
+        else:
+            i = self.singleInstruction
             print("[{}\n primaryInstruction: {}\nsecondaryInstruction: {}\n attributes: {}\n tableUsed: {}\n database: {}\n attrPairs: {}\n".format(i.instructionLine,i.primaryInstruction, i.secondaryInstruction, i.attributes, i.tableUsed,i.database,i.attrPairs))
 
-
     # Reads file and parses instructions
-    def read(self):
-        f = open(self.instructionSet, 'r')
+    def read(self, inputLine="--"):
+        if self.usingFile:
+            f = open(self.instructionSet, 'r')
 
-        #Read line by line
-        for line in f:
-            # Skip line if its a comment or blank
-            if line.startswith("--") or line.isspace():
-                continue
-            else:
-                self.parse(line) 
+            #Read line by line
+            for line in f:
+                # Skip line if its a comment or blank
+                if line.startswith("--") or line.isspace():
+                    continue
+                else:
+                    self.parse(line) 
+        else:
+            if not inputLine.startswith("--") and not inputLine.isspace():
+                self.parse(inputLine)
+
+
+
 
     # Parses line and creates instruction metadata
     def parse(self, line):
@@ -91,8 +105,11 @@ class Parser:
             i.primaryInstruction = "EXIT"
         else:
             print("Instruction " + line + " is unknown :(")
-        
-        self.instructions.append(i)
+
+        if self.usingFile: 
+            self.instructions.append(i)
+        else:
+            self.singleInstruction = i
 
     def parse_attr_pairs(self, attrSubstr, instruction):
         ss = attrSubstr[1:len(attrSubstr)-3]

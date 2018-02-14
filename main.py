@@ -2,11 +2,23 @@ import sys
 from parser import Parser
 
 def main():
-    p = Parser(sys.argv[1])
+    if(len(sys.argv) > 1):
+        p = Parser(True, sys.argv[1])
+    else:
+        p = Parser(False)
 
-    p.read()
+    if p.usingFile:
+        p.read()
+        p.print()
+    else:
+        userInput = ""
 
-    p.print()
+        while userInput != ".EXIT":
+            userInput = input("> ")
+
+            p.read(userInput)
+            p.print()
+
 
 if __name__ == "__main__":
     # execute main function :) just some fancy python stuff here no worries
