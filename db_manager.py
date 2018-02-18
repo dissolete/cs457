@@ -1,8 +1,13 @@
+#Primary Author: Gage Thomas
+#Secondary Author: Jake Shepherd
+#Class: CS 457
+
 import os
+import sys
 from parser import Instruction
 
 currDb = "" #Used to store the current database
-currDir = os.getcwd();
+currDir = os.getcwd()
 
 def executeCommand(instr):
 
@@ -30,6 +35,7 @@ def cmmdUse(instr) :
     #If it is 
     if os.path.isdir(dbPath):
         print("Using database %s." % instr.database)
+        global currDb
         currDb = instr.database
     else :
         print("!Failed to use database %s because it does not exist." % instr.database)
@@ -47,13 +53,46 @@ def cmmdCreateDB(instr) :
         print("!Failed to create database %s because it already exists." % instr.database)
 
 def cmmdDropDB(instr) :
-    print("Drop DB command")
+    #Check to see if the database exists by checking if its directory exists
+    dbPath = currDir + "/" + instr.database
+    global currDb
+
+    #If it doesn't already exist
+    if not os.path.isdir(dbPath) :
+        print("!Failed to delete %s because it does not exist." % instr.database)
+    else :
+        print("Database %s deleted." % instr.database)
+        os.system("rm -rf " + instr.database)
+        #if you deleted the database you are currently using, remove that from global
+        if currDb == instr.database :
+            currDb = ""
 
 def cmmdCreateTable(instr) :
-    print("Create Table command")
+    #If you aren't currently using a database, throw an error
+    if currDb == "" :
+        print("!Failed to create a table because no database is being used.")
+    # Else, if the table already exists...
+    elif os.path.isfile(currDb + "/" + instr.tableUsed + ".txt"):
+        print("!Failed to create table %s because it already exists." % instr.tableUsed)
+
+    else :
+        #os.system("touch " + currDb + "/" + instr.tableUsed + ".txt")
+        fout = open(currDb + "/" + instr.tableUsed + ".txt", "w+")
+        #write each of the attributes
+
+        fout.close();
+        print("Table %s created." % instr.tableUsed)
 
 def cmmdDropTable(instr) :
-    print("Drop Table command")
+    #If you aren't currently using a database, throw an error
+    if currDb == "" :
+        print("!Failed to delete a table because no database is being used.")
+    #else if the file does not exist
+    elif not os.path.isfile(currDb + "/" + instr.tableUsed + ".txt") :
+        print("!Failed to delete %s because it does not exist." % instr.tableUsed)
+    else :
+        os.remove(currDb + "/" + instr.tableUsed + ".txt")
+        print("Table %s deleted." % instr.tableUsed)
 
 def cmmdSelect(instr) :
     print("Select command")
@@ -62,4 +101,4 @@ def cmmdAlterTable(instr) :
     print("Alter table command")
 
 def cmmdExit(instr) :
-    print("Exit command")
+    sys.exit()
