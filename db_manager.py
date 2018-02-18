@@ -24,10 +24,27 @@ def executeCommand(instr):
         cmmdExit(instr)
 
 def cmmdUse(instr) :
-    print("Use command")
+    #Check to see if the database exists by checking if its directory exists
+    dbPath = currDir + "/" + instr.database
+
+    #If it is 
+    if os.path.isdir(dbPath):
+        print("Using database %s." % instr.database)
+        currDb = instr.database
+    else :
+        print("!Failed to use database %s because it does not exist." % instr.database)
+
 
 def cmmdCreateDB(instr) :
-    print("Create DB command")
+    #Check to see if the database exists by checking if its directory exists
+    dbPath = currDir + "/" + instr.database
+
+    #If it doesn't already exist
+    if not os.path.isdir(dbPath) :
+        print("Database %s created." % instr.database)
+        os.system("mkdir " + instr.database)
+    else :
+        print("!Failed to create database %s because it already exists." % instr.database)
 
 def cmmdDropDB(instr) :
     print("Drop DB command")
