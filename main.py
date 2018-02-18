@@ -13,7 +13,7 @@ def main():
     else:
         userInput = ""
 
-        while userInput != ".EXIT":
+        while userInput.lower() != ".EXIT":
             userInput = input("> ")
 
             p.read(userInput)

@@ -64,51 +64,58 @@ class Parser:
 
         i = Instruction()
         i.instructionLine = line
+        valid = False;
         
-        if line.startswith("CREATE DATABASE"):
-            i.primaryInstruction = "CREATE DATABASE"
+        if line.lower().startswith("create database"):
+            i.primaryInstruction = "create database"
             i.database = (line.split()[-1])[:-1]
+            valid = True;
             
-        elif line.startswith("DROP DATABASE"):
-            i.primaryInstruction = "DROP DATABASE"
+        elif line.lower().startswith("drop database"):
+            i.primaryInstruction = "drop database"
             i.database = (line.split()[-1])[:-1]
+            valid = True;
 
-        elif line.startswith("CREATE TABLE"):
-            i.primaryInstruction = "CREATE TABLE"
+        elif line.lower().startswith("create table"):
+            i.primaryInstruction = "create table"
             i.tableUsed = line.split()[2]
             self.parse_attr_pairs(line[line.find("("):len(line)], i) 
-        elif line.startswith("DROP TABLE"):
-            i.primaryInstruction = "DROP TABLE"
+            valid = True;
+        elif line.lower().startswith("drop table"):
+            i.primaryInstruction = "drop table"
             i.tableUsed = (line.split()[-1])[:-1]
+            valid = True;
 
-        elif line.startswith("SELECT"):
-            i.primaryInstruction = "SELECT"
+        elif line.lower().startswith("select"):
+            i.primaryInstruction = "select"
 
             # Check if SELECT *
             if(line.split()[1] == "*"):
                 i.tableUsed = (line.split()[3])[:-1]
 
+            valid = True;
 
 
-        elif line.startswith("USE"):
-            i.primaryInstruction = "USE"
+        elif line.lower().startswith("use"):
+            i.primaryInstruction = "use"
             i.instructionLine = line
             i.database = (line.split()[-1])[:-1]
 
-        elif line.startswith("ALTER TABLE"):
-            i.primaryInstruction = "ALTER TABLE"
+            valid = True;
+        elif line.lower().startswith("alter table"):
+            i.primaryInstruction = "alter table"
             ls = line.split()
             i.tableUsed = ls[2]
             i.secondaryInstruction = ls[3]
             i.attrPairs.append([ls[4],(ls[5])[:-1]])
-        elif line.startswith(".EXIT"):
-            i.primaryInstruction = "EXIT"
-        else:
-            print("Instruction " + line + " is unknown :(")
+            valid = True;
+        elif line.lower().startswith(".exit"):
+            i.primaryInstruction = "exit"
+            valid = True;
 
-        if self.usingFile: 
+        if valid and self.usingFile: 
             self.instructions.append(i)
-        else:
+        elif valid and not self.usingFile:
             self.singleInstruction = i
 
     def parse_attr_pairs(self, attrSubstr, instruction):
