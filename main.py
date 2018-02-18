@@ -1,5 +1,6 @@
 import sys
 from parser import Parser
+from db_manager import executeCommand
 
 def main():
     if(len(sys.argv) > 1):
@@ -9,7 +10,9 @@ def main():
 
     if p.usingFile:
         p.read()
-        p.print()
+        for instr in p.instructions :
+            executeCommand(instr)
+        #p.print()
     else:
         userInput = ""
 
@@ -17,7 +20,8 @@ def main():
             userInput = input("> ")
 
             p.read(userInput)
-            p.print()
+            executeCommand(p.singleInstruction)
+            #p.print()
 
 
 if __name__ == "__main__":
