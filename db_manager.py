@@ -97,10 +97,51 @@ def cmmdDropTable(instr) :
         print("Table %s deleted." % instr.tableUsed)
 
 def cmmdSelect(instr) :
-    print("Select command")
+    # interesting for now since this project doenst require us to add anything to the tables, so they will always return nothing for this project
+    if currDb == "":
+        print("!Failed to select from table since no database is being used.")
+    elif not os.path.isfile(currDb + "/" + instr.tableUsed + ".txt"):
+        print("Failed to select from table %s because it does not exist." % instr.tableUsed)
+    else:
+        f = open(currDb + "/" + instr.tableUsed + ".txt", "r")
+
+        # get attr pairs for the table
+        # maybe make this a function? i dunno
+        attrLine = f.readline().split()
+        attrPairs = []
+        for i in range(0, len(attrLine), 2):
+            attrPairs.append([attrLine[i], attrLine[i + 1]])
+
+        # this should be a function later? for like formatting
+        for i in range(0, len(attrPairs)):
+            print("{} {}".format(attrPairs[i][0], attrPairs[i][1]), end="")
+            if i < len(attrPairs) - 1:
+                print(" | ", end="")
+            print("",end="")
+
+        f.close()
 
 def cmmdAlterTable(instr) :
-    print("Alter table command")
+    #until we start saving data in memory, we'll have to read every line and rewrite it
+    if currDb == "":
+        print("!Failed to alter table since no databe is being used.")
+    elif not os.path.isfile(currDb + "/" + instr.tableUsed + ".txt"):
+        print("!Failed to alter table %s since it does not exist." % instr.tableUsed)
+    else:
+        f = open(currDb + "/" + instr.tableUsed + ".txt", "r+")
+        attrs = f.readline().split()
+
+        # Remove file
+        f.close()
+        os.remove(currDb + "/" + instr.tableUsed + ".txt")
+        # add new attr
+        attrs.append(instr.attrPairs[0][0])
+        attrs.append(instr.attrPairs[0][1])
+        #rewrite
+        f = open(currDb + "/" + instr.tableUsed + ".txt", "w+")
+        for attr in attrs:
+           f.write("{} ".format(attr))
+        f.close()
 
 def cmmdExit(instr) :
     sys.exit()
