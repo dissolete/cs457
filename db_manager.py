@@ -77,7 +77,7 @@ def cmmdCreateTable(instr) :
 
     else :
         #os.system("touch " + currDb + "/" + instr.tableUsed + ".txt")
-        fout = open(currDb + "/" + instr.tableUsed + ".txt", "w+")
+        fout = open(currDb + "/" + instr.tableUsed + ".txt", "w")
         #write each of the attributes
         for attr in instr.attrPairs:
             fout.write("{} {} ".format(attr[0], attr[1]))
@@ -117,7 +117,7 @@ def cmmdSelect(instr) :
             print("{} {}".format(attrPairs[i][0], attrPairs[i][1]), end="")
             if i < len(attrPairs) - 1:
                 print(" | ", end="")
-            print("",end="")
+        print(" ")
 
         f.close()
 
@@ -143,5 +143,6 @@ def cmmdAlterTable(instr) :
            f.write("{} ".format(attr))
         f.close()
 
+        print("Table {} altered.".format(instr.tableUsed))
 def cmmdExit(instr) :
     sys.exit()

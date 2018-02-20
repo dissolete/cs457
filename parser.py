@@ -51,7 +51,7 @@ class Parser:
                 if line.startswith("--") or line.isspace():
                     continue
                 else:
-                    self.parse(line) 
+                    self.parse(line.strip()) 
         else:
             if not inputLine.startswith("--") and not inputLine.isspace():
                 self.parse(inputLine)
