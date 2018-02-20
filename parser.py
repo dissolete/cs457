@@ -119,11 +119,11 @@ class Parser:
             self.singleInstruction = i
 
     def parse_attr_pairs(self, attrSubstr, instruction):
-        ss = attrSubstr[1:len(attrSubstr)-3]
+        ss = attrSubstr[1:len(attrSubstr)-2]
         while len(ss) > 0:
             e = ss.find(",")
             if e < 0:
-                e = len(ss)
+                e = len(ss) 
             instruction.attrPairs.append(ss[:e].split())
             ss = (ss[ss.find(","):])[2:]
 

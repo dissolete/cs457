@@ -79,6 +79,8 @@ def cmmdCreateTable(instr) :
         #os.system("touch " + currDb + "/" + instr.tableUsed + ".txt")
         fout = open(currDb + "/" + instr.tableUsed + ".txt", "w+")
         #write each of the attributes
+        for attr in instr.attrPairs:
+            fout.write("{} {} ".format(attr[0], attr[1]))
 
         fout.close();
         print("Table %s created." % instr.tableUsed)
