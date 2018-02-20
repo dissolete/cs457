@@ -12,7 +12,6 @@ def main():
         p.read()
         for instr in p.instructions :
             executeCommand(instr)
-        #p.print()
     else:
         userInput = ""
 
@@ -21,9 +20,9 @@ def main():
 
             p.read(userInput)
             executeCommand(p.singleInstruction)
-            #p.print()
-
 
 if __name__ == "__main__":
     # execute main function :) just some fancy python stuff here no worries
     main()
+
+
