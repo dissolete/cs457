@@ -1,6 +1,10 @@
 #Primary Author: Gage Thomas
 #Secondary Author: Jake Shepherd
 #Class: CS 457
+#Date: 2/20/2017
+#Version 1: Allows user to create and drop databases and tables and display
+#           everything with a Select * query
+#           Alter table is also implemented, as well as USE 
 
 import os
 import sys

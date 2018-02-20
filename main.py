@@ -1,6 +1,10 @@
 # main.py -- The main function call. Program starts here.
-# Author -- Jake Shepherd
-
+#Primary Author: Jake Shepherd
+#Secondary Author: Gage Thomas
+#Class: CS 457
+#Date: 2/20/2017
+#Version 1: Executes all instructions either coming from a command line
+#           or from an input file given as a command-line argument
 import sys
 from parser import Parser
 from db_manager import executeCommand
