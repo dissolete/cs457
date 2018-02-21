@@ -1,3 +1,9 @@
+# parser.py -- Defines the objects and methods used for parsing the SQL statements
+# Author - Jake Shepherd
+# Class: CS 457
+# Date: 2/20/2018
+# Version 1: Defines two class objects. The first is the instruction class which saves information about parsed instructions. This info can be used when processing the instruction. The second class defines the parser, which is in charge of reading the SQL commands and creating instructions that can be understood.
+
 class Instruction:
 
     def __init__(self):
@@ -31,6 +37,8 @@ class Parser:
         self.usingFile = usingFile
 
         
+    # Prints the instructions generated after parsing
+    # Primarily used for debug purposes
     def print(self):
         if self.usingFile:
             for i in self.instructions:
@@ -40,7 +48,7 @@ class Parser:
             i = self.singleInstruction
             print("[{}\n primaryInstruction: {}\nsecondaryInstruction: {}\n attributes: {}\n tableUsed: {}\n database: {}\n attrPairs: {}\n".format(i.instructionLine,i.primaryInstruction, i.secondaryInstruction, i.attributes, i.tableUsed,i.database,i.attrPairs))
 
-    # Reads file and parses instructions
+    # Reads file or user input. ignores comments and blank spaces. Passes line to parse method
     def read(self, inputLine="--"):
         if self.usingFile:
             f = open(self.instructionSet, 'r')
@@ -60,6 +68,7 @@ class Parser:
 
 
     # Parses line and creates instruction metadata
+    # Lots of array splicing going on. Not intended to be completely readable :)
     def parse(self, line):
 
         i = Instruction()
@@ -118,6 +127,9 @@ class Parser:
         elif valid and not self.usingFile:
             self.singleInstruction = i
 
+    # method parses the attributes defined in the CREATE TABLE command
+    # Could also be used whenever (attr datatype, ...) is needed to be parsed
+    # Again, magic array splicing
     def parse_attr_pairs(self, attrSubstr, instruction):
         ss = attrSubstr[1:len(attrSubstr)-2]
         while len(ss) > 0:
@@ -126,7 +138,5 @@ class Parser:
                 e = len(ss) 
             instruction.attrPairs.append(ss[:e].split())
             ss = (ss[ss.find(","):])[2:]
-
-
 
 
