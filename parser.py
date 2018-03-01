@@ -49,20 +49,8 @@ class Parser:
             print("[{}\n primaryInstruction: {}\nsecondaryInstruction: {}\n attributes: {}\n tableUsed: {}\n database: {}\n attrPairs: {}\n".format(i.instructionLine,i.primaryInstruction, i.secondaryInstruction, i.attributes, i.tableUsed,i.database,i.attrPairs))
 
     # Reads file or user input. ignores comments and blank spaces. Passes line to parse method
-    def read(self, inputLine="--"):
-        if self.usingFile:
-            f = open(self.instructionSet, 'r')
-
-            #Read line by line
-            for line in f:
-                # Skip line if its a comment or blank
-                if line.startswith("--") or line.isspace():
-                    continue
-                else:
-                    self.parse(line.strip()) 
-        else:
-            if not inputLine.startswith("--") and not inputLine.isspace():
-                self.parse(inputLine)
+    def read(self, inputLine):
+        self.parse(inputLine)
 
 
 
