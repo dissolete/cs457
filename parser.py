@@ -31,7 +31,6 @@ class Instruction:
 class Parser:
 
     def __init__(self, usingFile, filename=""):
-        self.instructions = []
         self.singleInstruction = Instruction()
         self.instructionSet = filename
         self.usingFile = usingFile
@@ -40,19 +39,9 @@ class Parser:
     # Prints the instructions generated after parsing
     # Primarily used for debug purposes
     def print(self):
-        if self.usingFile:
-            for i in self.instructions:
-                print("[{}\n primaryInstruction: {}\nsecondaryInstruction: {}\n attributes: {}\n tableUsed: {}\n database: {}\n attrPairs: {}\n".format(i.instructionLine,i.primaryInstruction, i.secondaryInstruction, i.attributes, i.tableUsed,i.database,i.attrPairs))
 
-        else:
             i = self.singleInstruction
             print("[{}\n primaryInstruction: {}\nsecondaryInstruction: {}\n attributes: {}\n tableUsed: {}\n database: {}\n attrPairs: {}\n".format(i.instructionLine,i.primaryInstruction, i.secondaryInstruction, i.attributes, i.tableUsed,i.database,i.attrPairs))
-
-    # Reads file or user input. ignores comments and blank spaces. Passes line to parse method
-    def read(self, inputLine):
-        self.parse(inputLine)
-
-
 
 
     # Parses line and creates instruction metadata
@@ -110,9 +99,7 @@ class Parser:
             i.primaryInstruction = "exit"
             valid = True;
 
-        if valid and self.usingFile: 
-            self.instructions.append(i)
-        elif valid and not self.usingFile:
+        if valid:
             self.singleInstruction = i
 
     # method parses the attributes defined in the CREATE TABLE command
