@@ -3,14 +3,13 @@
 #Secondary Author: Gage Thomas
 #Class: CS 457
 #Date: 2/20/2017
-#Version 1: Executes all instructions either coming from a command line
-#           or from an input file given as a command-line argument
+#Version 2: Program start - reads user input and interprets instructions
 import sys
 from parser import Parser
 from db_manager import executeCommand
 
 def main():
-
+    leParser = Parser()
     userInput = ""
 
     # Loop, fetching user input, until user executes 
@@ -25,7 +24,9 @@ def main():
             userInput = userInput + " " + temp                
 
         print(userInput)
-        #p.read(userInput)
+        leParser.parse(userInput)
+        # Uncomment this line to see how the instructions are created
+        # leParser.print()
         #executeCommand(p.singleInstruction)
 
 if __name__ == "__main__":

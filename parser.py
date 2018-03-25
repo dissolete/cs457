@@ -24,24 +24,53 @@ class Instruction:
 
         # Attribute pairs define name and type of attribute, used in CREATE
         self.attrPairs = []
+        
+        # List which specifies the where clause used. The first index
+        # represents the attribute, the second index represents
+        # the comparison operatior, the third index represents the 
+        # value of comparision.
+        # IE the statement where price > 150 will create the list
+        # where_clause = ['price', '>', '150']
+        # and the statement where name = 'jake' will create the list
+        # where_clause = ['name', '=', 'jake']
+        self.whereClause = []
+
+        # During an update statement, these two variables are used.
+        # UpdateAttributeName defines what attribute is being changed
+        # during the update, and updateSetToValue defines what the new
+        # attribute is being set to.
+        # IE the statement set name = 'Gizmo' will create the variables
+        # updateAttributeName = "name"
+        # updateSetToValue = "Gizmo"
+        self.updateAttributeName = ""
+        self.updateSetToValue = ""
+
+        # List stores the attribute values to be inserted
+        # IE, the statement
+        # insert into Product values(1, 'Gizmo', 19.99)
+        # will create the list
+        # insertValues = ['1', 'Gizmo', '19.99']
+        self.insertValues = []
 
         # Full instructionLi
         self.instructionLine = ""
 
 class Parser:
 
-    def __init__(self, usingFile, filename=""):
+    def __init__(self):
         self.singleInstruction = Instruction()
-        self.instructionSet = filename
-        self.usingFile = usingFile
-
         
     # Prints the instructions generated after parsing
     # Primarily used for debug purposes
     def print(self):
 
             i = self.singleInstruction
-            print("[{}\n primaryInstruction: {}\nsecondaryInstruction: {}\n attributes: {}\n tableUsed: {}\n database: {}\n attrPairs: {}\n".format(i.instructionLine,i.primaryInstruction, i.secondaryInstruction, i.attributes, i.tableUsed,i.database,i.attrPairs))
+            print("[{}\n primaryInstruction: {}\nsecondaryInstruction: {}\n attributes: {}\n tableUsed: {}\n database: {}\n attrPairs: {}".format(i.instructionLine,i.primaryInstruction, i.secondaryInstruction, i.attributes, i.tableUsed,i.database,i.attrPairs, end=''))
+            print("whereClause: {}".format(i.whereClause, end=''))
+            print("updateAttributeName: {}".format(i.updateAttributeName, end=''))
+            print("updateSetToValue: {}".format(i.updateSetToValue, end=''))
+            print("insertValues: {}".format(i.insertValues, end=''))
+
 
 
     # Parses line and creates instruction metadata
@@ -77,10 +106,23 @@ class Parser:
 
             # Check if SELECT *
             if(line.split()[1] == "*"):
-                i.tableUsed = (line.split()[3])[:-1]
+                i.tableUsed = (line.split()[3]).replace(';', '')
+            else:
+                #fetch attrs 1 by 1 until the keywork from is found
+                ws = line[7:].split()
+                for k in range(0, len(ws)):
+                    if ws[k] != "from":
+                        i.attributes.append(ws[k].lower().replace(',', ''))
+                    else:
+                        i.tableUsed = ws[k+1].replace(';', '')
+                        break
+
+            # look for the where keyword
+            ws = line[line.find("where"):]
+            self.parse_where_clauses(ws, i)
+                
 
             valid = True;
-
 
         elif line.lower().startswith("use"):
             i.primaryInstruction = "use"
@@ -95,6 +137,31 @@ class Parser:
             i.secondaryInstruction = ls[3]
             i.attrPairs.append([ls[4],(ls[5])[:-1]])
             valid = True;
+        elif line.lower().startswith("update"):
+            i.primaryInstruction = "update"
+            ls = line.split()
+            i.tableUsed = ls[1]
+            ws = line[line.find("where"):]
+            us = line[line.find("set"):]
+            self.parse_where_clauses(ws, i)
+            self.parse_update_clause(us, i)
+
+            valid = True
+        elif line.lower().startswith("delete"):
+            i.primaryInstruction = "delete"
+            ls = line.split()
+            i.tableUsed = ls[2]
+            ws = line[line.find("where"):]
+            self.parse_where_clauses(ws, i)
+            valid = True
+        elif line.lower().startswith("insert"):
+            i.primaryInstruction = "insert"
+            ls = line.split()
+            vs = line[line.find("values"):]
+            self.parse_values(vs, i)
+            valid = True
+
+
         elif line.lower().startswith(".exit"):
             i.primaryInstruction = "exit"
             valid = True;
@@ -114,4 +181,18 @@ class Parser:
             instruction.attrPairs.append(ss[:e].split())
             ss = (ss[ss.find(","):])[2:]
 
+    def parse_where_clauses(self, whereLine, instruction):
+        parts = whereLine.replace('\'', '').replace(';', '').split()
+        if len(parts) > 0:
+            instruction.whereClause.append(parts[1])
+            instruction.whereClause.append(parts[2])
+            instruction.whereClause.append(parts[3])
 
+    def parse_update_clause(self, updateLine, instruction):
+        parts = updateLine.replace('\'', '').replace(';', '').split()
+        instruction.updateAttributeName = parts[1]
+        instruction.updateSetToValue = parts[3]
+
+    def parse_values(self, valuesLine, instruction):
+        parts = valuesLine[6:].replace('(', '').replace(')', '').replace('\'', '').replace(',', '').replace(';', '').split()
+        instruction.insertValues = parts
