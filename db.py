@@ -1,17 +1,15 @@
 #db.py -- Defines the objects and methods for reading a database into memory
 #           and writing to files
-#Author - Gage Thomas
+#Author - Gage Thomas, Jake Shepherd (secondary)
 #Class: CS 457
 #Date: 3/12/2018
-#Version 1: Defines the Table and Database objects
+#Version 1: Defines the Table and Database objects for handling the implementation
+#           of commands
 
 from parser import Instruction
-<<<<<<< HEAD
 import operator
-=======
 import os
 import sys
->>>>>>> f0e7ea29cc54d7b4c5b1ba87d1588884fb094eb6
 
 class Table:
     def __init__(self, tbname, dbname, exists):
