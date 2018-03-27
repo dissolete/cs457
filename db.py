@@ -22,7 +22,8 @@ class Table:
 
         self.operators = { '=': operator.eq,
                            '>': operator.gt,
-                           '<': operator.lt
+                           '<': operator.lt,
+                           '!=': operator.ne
                          }
 
 #If the table already exists, read in the data
@@ -44,7 +45,7 @@ class Table:
                     #If not the first line, read in the actual values
                     for attributeNum in range(0, len(theLine), 1):
                         newTuple.append(theLine[attributeNum])#append each attr to the tuple
-                    attributeValues.append(newTuple)
+                    self.attributeValues.append(newTuple)
 
                 lineNum += 1
             f.close()
@@ -74,37 +75,62 @@ class Table:
     def select(self, attributes, whereClause):
         # The results after the where filter
         results = []
+        filteredResults = []
         
-        # Attribute that we are using in the where clause
-        attributeNum = 0
-        lefthandCasted, righthandCasted = ""
+        # If where clause is empty, then we are simply returning every row
+        if len(whereClause) == 0:
+            results = self.attributeValues
+            filteredResults = results
+        else:
+
+            # Attribute that we are using in the where clause
+            attributeNum = 0
+            lefthandCasted = None 
+            righthandCasted = None
 
 
-        # Assign the attributeNum to the correct col number
-        for n in range(0, len(self.attributeNames)):
-            if self.attributeNames[n] == whereClause[0]:
-                attributeNume = n
-                break
+            # Assign the attributeNum to the correct col number
+            for n in range(0, len(self.attributeNames)):
+                if self.attributeNames[n] == whereClause[0]:
+                    attributeNume = n
+                    break
 
-        # Search through tuples
-        for rowNum in range(0, len(self.attributeValues)):
-            # First we have to make sure to cast the attribute
-            # in question to the correct type
-            # I really dont wanna check this like this, but its 
-            # what im gonna do :(
-            if self.attributeTypes[attributeNum] == "float":
-                lefthandCasted = float(self.attributeValues[rowNum][attributeNum])
-                rightHandCasted = float(whereClause[2])
-            elif self.attributeTypes[attributeNum] == "int":
-                lefthandCasted = int(self.attributeValues[rowNum][attributeNum])
-                righthandCasted = int(whereClause[2])
+            # Search through tuples
+            for rowNum in range(0, len(self.attributeValues)):
+                # First we have to make sure to cast the attribute
+                # in question to the correct type
+                # I really dont wanna check this like this, but its 
+                # what im gonna do :(
+                if self.attributeTypes[attributeNum] == "float":
+                    lefthandCasted = float(self.attributeValues[rowNum][attributeNum])
+                    rightHandCasted = float(whereClause[2])
+                elif self.attributeTypes[attributeNum] == "int":
+                    lefthandCasted = int(self.attributeValues[rowNum][attributeNum])
+                    righthandCasted = int(whereClause[2])
 
-            if self.operators[whereClause[1]](lefthandCasted, righthandCasted):
-                results.append(self.attributeValues[rowNum])
+                if self.operators[whereClause[1]](lefthandCasted, righthandCasted):
+                    results.append(self.attributeValues[rowNum])
+
+        # Now we filter what we display
+        if len(attributes) == 0:
+            # If not attribute names specified, this is a select *
+            filteredResults = results
+        else:
+            newRow = []
+            
+            for r in range(0, len(results)):
+                newRow.clear()
+                for c in range(0, len(results[r])):
+                    
+                    if self.attributeNames[c] in attributes:
+                        newRow.append(results[r][c])
+                filteredResults.append(newRow)
+
+        return filteredResults
 
 #Use to insert a new tuple into the table
 #Tup is a list that is the tuple that should be added
-    def insert_tuple(self, tup):
+    def insert(self, tup):
         f = open(self.dbName + "/" + self.tableName + ".txt", "a")
         newTup = ""
         for attrNum in range(0, len(tup), 1):

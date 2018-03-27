@@ -33,6 +33,8 @@ def executeCommand(instr):
         cmmdSelect(instr)
     elif instr.primaryInstruction == "alter table" :
         cmmdAlterTable(instr)
+    elif instr.primaryInstruction == "insert":
+        cmdInsert(instr)
     elif instr.primaryInstruction == "exit" :
         cmmdExit(instr)
 
@@ -123,23 +125,23 @@ def cmmdSelect(instr) :
     elif not os.path.isfile(currDb + "/" + instr.tableUsed + ".txt"):
         print("Failed to select from table %s because it does not exist." % instr.tableUsed)
     else:
-        f = open(currDb + "/" + instr.tableUsed + ".txt", "r")
+        table = database.getTable(instr.tableUsed)
+        if table:
+            results = table.select(instr.attributes, instr.whereClause)
+            print(results)
 
-        # get attr pairs for the table
-        # maybe make this a function? i dunno
-        attrLine = f.readline().split()
-        attrPairs = []
-        for i in range(0, len(attrLine), 2):
-            attrPairs.append([attrLine[i], attrLine[i + 1]])
+def cmdInsert(instr):
+    if currDb == "":
+        print("!Failed to alter table since no database is being used.")
 
-        # this should be a function later? for like formatting
-        for i in range(0, len(attrPairs)):
-            print("{} {}".format(attrPairs[i][0], attrPairs[i][1]), end="")
-            if i < len(attrPairs) - 1:
-                print(" | ", end="")
-        print(" ")
-
-        f.close()
+    elif not os.path.isfile(currDb + "/" + instr.tableUsed + ".txt"):
+        print("!Failed to insert into table %s since it does not exist." % instr.tableUsed)
+    else:
+        global database
+        table = database.getTable(instr.tableUsed)
+        if table:
+            table.insert(instr.insertValues)
+            print("1 new record inserted.")
 
 #Assumes for now that it is alter table add
 def cmmdAlterTable(instr) :
