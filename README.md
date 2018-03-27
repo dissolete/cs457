@@ -8,6 +8,22 @@ Organizing Multiple Tables:
 Within the database directories, each table is stored as a single .txt file. The first row of these files lists every attribute and their respective datatype in this format: the first attribute name, a space, the datatype of that attribute, another space, and then repeat until all attributes for that table are described. After that, each row of the file is a tuple in the table. Note: the Null value is "NULL"
 
 
+Tuple Storage:
+Each table file stores the tuples as a single row with each attribute separated by a space. As noted before, the first line of each table file lists the attribute names and types separated by spaces.
+
+
+Tuple Insertion Implementation:
+Tuple insertion is done by appending a new row for the tuple (as described in Tuple Storage) to the bottom of the table file.
+
+
+Tuple Query Implementation:
+The select function in Table returns a 2D list storing the actual selected data. First, the attribute used in the where clause is identified. The tuples specified from the where clause are then filtered out and appended to the "results" 2D list. Finally, if specific attributes (not *) are selected, the non-specified attributes are removed and the filtered results are returned.
+
+
+Tuple Deletion and Modification:
+Both of these functions use a similar strategy to the Query implementation.
+
+
 High-level Implementation Details:
 There are four files that make the program work: main.py, parser.py, db.py, and db_manager.py. main.py reads user input and stores a parser object and a calls the executeCommand function from db_manager.py. 
 
