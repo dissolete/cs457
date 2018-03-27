@@ -123,7 +123,7 @@ class DB:
     def addMetaData(self):
         f = open(self.name + "/" + self.name + ".txt", "w")
         for tb in self.tables:
-            f.write(tb.tableName)
+            f.write(tb.tableName + "\n")
         f.close()
 
     #Creates a new table in this database
@@ -131,7 +131,7 @@ class DB:
     def createTable(self, tbName, attrPairs):
         #First update the metadata file
         f = open(self.name + "/" + self.name + ".txt", "a")
-        f.write(tbName + ".txt")#Assuming that this creates a new line
+        f.write(tbName + ".txt\n")#Assuming that this creates a new line
         f.close()
 
         #Now, create the table
