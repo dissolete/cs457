@@ -10,8 +10,12 @@ import os
 import sys
 from parser import Instruction
 
+from db import DB
+
 currDb = "" #Used to store the current database
 currDir = os.getcwd()
+
+database = None;
 
 def executeCommand(instr):
 
@@ -32,6 +36,7 @@ def executeCommand(instr):
     elif instr.primaryInstruction == "exit" :
         cmmdExit(instr)
 
+#Updated to use db object, most likely functioning
 def cmmdUse(instr) :
     #Check to see if the database exists by checking if its directory exists
     dbPath = currDir + "/" + instr.database
@@ -41,10 +46,12 @@ def cmmdUse(instr) :
         print("Using database %s." % instr.database)
         global currDb
         currDb = instr.database
+        global database
+        database = DB(currDb, True)
     else :
         print("!Failed to use database %s because it does not exist." % instr.database)
 
-
+#Updated to use db object, functioning
 def cmmdCreateDB(instr) :
     #Check to see if the database exists by checking if its directory exists
     dbPath = currDir + "/" + instr.database
@@ -53,6 +60,7 @@ def cmmdCreateDB(instr) :
     if not os.path.isdir(dbPath) :
         print("Database %s created." % instr.database)
         os.system("mkdir " + instr.database)
+        newDB = DB(instr.database, False)#Not storing this, but just creating the file and directory
     else :
         print("!Failed to create database %s because it already exists." % instr.database)
 

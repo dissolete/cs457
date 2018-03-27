@@ -27,7 +27,7 @@ def main():
         leParser.parse(userInput)
         # Uncomment this line to see how the instructions are created
         # leParser.print()
-        #executeCommand(p.singleInstruction)
+        executeCommand(leParser.singleInstruction)
 
 if __name__ == "__main__":
     # execute main function :) just some fancy python stuff here no worries

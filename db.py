@@ -106,7 +106,7 @@ class DB:
 #Assuming it will be called <dbname>.txt inside the working directory
 #Assuming it will be the table names on each row
         if exists:
-            f = open(self.name + "/" + self.name ".txt", "r")
+            f = open(self.name + "/" + self.name + ".txt", "r")
             for line in f:
                 self.tables.append(Table(line.strip(), self.name, True))
             f.close()
@@ -116,7 +116,7 @@ class DB:
     #Used when a previously non-existent database is made or when tables
     #are dropped
     def addMetaData(self):
-        f = open(self.name + "/" + self.name ".txt", "w")
+        f = open(self.name + "/" + self.name + ".txt", "w")
         for tb in self.tables:
             f.write(tb.tableName)
         f.close()
@@ -124,7 +124,7 @@ class DB:
     #Creates a new table in this database
     def createTable(self, tbName, names, types):
         #First update the metadata file
-        f = open(self.name + "/" + self.name ".txt", "a")
+        f = open(self.name + "/" + self.name + ".txt", "a")
         f.write(tbname + ".txt")#Assuming that this creates a new line
         f.close()
 
