@@ -6,12 +6,9 @@
 #Version 1: Defines the Table and Database objects
 
 from parser import Instruction
-<<<<<<< HEAD
 import operator
-=======
 import os
 import sys
->>>>>>> f0e7ea29cc54d7b4c5b1ba87d1588884fb094eb6
 
 class Table:
     def __init__(self, tbname, dbname, exists):
@@ -172,7 +169,7 @@ class DB:
     def createTable(self, tbName, attrPairs):
         #First update the metadata file
         f = open(self.name + "/" + self.name + ".txt", "a")
-        f.write(tbName + ".txt\n")#Assuming that this creates a new line
+        f.write(tbName + "\n")#Assuming that this creates a new line
         f.close()
 
         #Now, create the table
@@ -183,7 +180,7 @@ class DB:
     #Used to get a table
     def getTable(self, tbName):
         for tb in self.tables:
-            if(tb.tableName == tbName):
+            if(tb.tableName.lower() == tbName.lower()):
                 return tb
         return None
 
