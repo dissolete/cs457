@@ -112,6 +112,7 @@ class Table:
         newTup = ""
         for attrNum in range(0, len(tup), 1):
             newTup = newTup + tup[attrNum] + " "
+        self.attributeValues.append(tup)
         f.write(newTup + "\n")
         f.close()
 
