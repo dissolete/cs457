@@ -93,12 +93,12 @@ class Parser:
 
         elif line.lower().startswith("create table"):
             i.primaryInstruction = "create table"
-            i.tableUsed = line.split()[2]
+            i.tableUsed = line.split()[2].lower()
             self.parse_attr_pairs(line[line.find("("):len(line)], i) 
             valid = True;
         elif line.lower().startswith("drop table"):
             i.primaryInstruction = "drop table"
-            i.tableUsed = (line.split()[-1])[:-1]
+            i.tableUsed = (line.split()[-1])[:-1].lower()
             valid = True;
 
         elif line.lower().startswith("select"):
@@ -106,7 +106,7 @@ class Parser:
 
             # Check if SELECT *
             if(line.split()[1] == "*"):
-                i.tableUsed = (line.split()[3]).replace(';', '')
+                i.tableUsed = (line.split()[3]).replace(';', '').lower()
             else:
                 #fetch attrs 1 by 1 until the keywork from is found
                 ws = line[7:].split()
@@ -133,14 +133,14 @@ class Parser:
         elif line.lower().startswith("alter table"):
             i.primaryInstruction = "alter table"
             ls = line.split()
-            i.tableUsed = ls[2]
+            i.tableUsed = ls[2].lower()
             i.secondaryInstruction = ls[3]
             i.attrPairs.append([ls[4],(ls[5])[:-1]])
             valid = True;
         elif line.lower().startswith("update"):
             i.primaryInstruction = "update"
             ls = line.split()
-            i.tableUsed = ls[1]
+            i.tableUsed = ls[1].lower()
             ws = line[line.find("where"):]
             us = line[line.find("set"):]
             self.parse_where_clauses(ws, i)
@@ -150,13 +150,14 @@ class Parser:
         elif line.lower().startswith("delete"):
             i.primaryInstruction = "delete"
             ls = line.split()
-            i.tableUsed = ls[2]
+            i.tableUsed = ls[2].lower()
             ws = line[line.find("where"):]
             self.parse_where_clauses(ws, i)
             valid = True
         elif line.lower().startswith("insert"):
             i.primaryInstruction = "insert"
             ls = line.split()
+            i.tableUsed = ls[2].lower()
             vs = line[line.find("values"):]
             self.parse_values(vs, i)
             valid = True
