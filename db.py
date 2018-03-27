@@ -6,8 +6,12 @@
 #Version 1: Defines the Table and Database objects
 
 from parser import Instruction
+<<<<<<< HEAD
+import operator
+=======
 import os
 import sys
+>>>>>>> f0e7ea29cc54d7b4c5b1ba87d1588884fb094eb6
 
 class Table:
     def __init__(self, tbname, dbname, exists):
@@ -18,6 +22,11 @@ class Table:
         self.attributeTypes = []
         self.attributeNames = []
         self.attributeValues = []#Will be a 2D list
+
+        self.operators = { '=': operator.eq,
+                           '>': operator.gt,
+                           '<': operator.lt
+                         }
 
 #If the table already exists, read in the data
         if exists :
@@ -64,6 +73,37 @@ class Table:
 
             f.write(nextLine + "\n")
         f.close()
+
+    def select(self, attributes, whereClause):
+        # The results after the where filter
+        results = []
+        
+        # Attribute that we are using in the where clause
+        attributeNum = 0
+        lefthandCasted, righthandCasted = ""
+
+
+        # Assign the attributeNum to the correct col number
+        for n in range(0, len(self.attributeNames)):
+            if self.attributeNames[n] == whereClause[0]:
+                attributeNume = n
+                break
+
+        # Search through tuples
+        for rowNum in range(0, len(self.attributeValues)):
+            # First we have to make sure to cast the attribute
+            # in question to the correct type
+            # I really dont wanna check this like this, but its 
+            # what im gonna do :(
+            if self.attributeTypes[attributeNum] == "float":
+                lefthandCasted = float(self.attributeValues[rowNum][attributeNum])
+                rightHandCasted = float(whereClause[2])
+            elif self.attributeTypes[attributeNum] == "int":
+                lefthandCasted = int(self.attributeValues[rowNum][attributeNum])
+                righthandCasted = int(whereClause[2])
+
+            if self.operators[whereClause[1]](lefthandCasted, righthandCasted):
+                results.append(self.attributeValues[rowNum])
 
 #Use to insert a new tuple into the table
 #Tup is a list that is the tuple that should be added
