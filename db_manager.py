@@ -82,6 +82,7 @@ def cmmdDropDB(instr) :
             global database
             database = None
 
+#Updated to use db object, functioning
 def cmmdCreateTable(instr) :
     #If you aren't currently using a database, throw an error
     if currDb == "" :
@@ -92,12 +93,13 @@ def cmmdCreateTable(instr) :
 
     else :
         #os.system("touch " + currDb + "/" + instr.tableUsed + ".txt")
-        fout = open(currDb + "/" + instr.tableUsed + ".txt", "w")
+        #fout = open(currDb + "/" + instr.tableUsed + ".txt", "w")
         #write each of the attributes
-        for attr in instr.attrPairs:
-            fout.write("{} {} ".format(attr[0], attr[1]))
+        #for attr in instr.attrPairs:
+         #   fout.write("{} {} ".format(attr[0], attr[1]))
 
-        fout.close();
+        #fout.close();
+        database.createTable(instr.tableUsed, instr.attrPairs)
         print("Table %s created." % instr.tableUsed)
 
 def cmmdDropTable(instr) :

@@ -85,10 +85,13 @@ class Table:
         self.write_to_file()
 
     #Used when a previously non-existent table is made to add all attributes
-    def initializeAttr(self, names, types):
-        for index in range(0, len(names), 1):
-            self.attributeNames.append(names[index])
-            self.attributeTypes.append(types[index])
+    #Attribute pairs is a 2D array where each row is an attribute name and
+    #Its type
+    def initializeAttr(self, attrPairs):
+        #For each attribute, append its name and type
+        for attr in attrPairs:
+            self.attributeNames.append(attr[0])
+            self.attributeTypes.append(attr[1])
         self.write_to_file()
 
     #Need to add select, modify, and delete commands
@@ -122,16 +125,17 @@ class DB:
         f.close()
 
     #Creates a new table in this database
-    def createTable(self, tbName, names, types):
+    #attrPairs is a 2D array, each row is an attribute name and its type
+    def createTable(self, tbName, attrPairs):
         #First update the metadata file
         f = open(self.name + "/" + self.name + ".txt", "a")
-        f.write(tbname + ".txt")#Assuming that this creates a new line
+        f.write(tbName + ".txt")#Assuming that this creates a new line
         f.close()
 
         #Now, create the table
-        newTable = Table(tbname, self.name, False)
+        newTable = Table(tbName, self.name, False)
         self.tables.append(newTable)
-        newTable.initializeAttr(names, types)#Should be written to a file
+        newTable.initializeAttr(attrPairs)#Should be written to a file
 
     #Used to get a table
     def getTable(self, tbName):
