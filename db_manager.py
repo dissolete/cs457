@@ -64,6 +64,7 @@ def cmmdCreateDB(instr) :
     else :
         print("!Failed to create database %s because it already exists." % instr.database)
 
+#Updated to use db object, functioning
 def cmmdDropDB(instr) :
     #Check to see if the database exists by checking if its directory exists
     dbPath = currDir + "/" + instr.database
@@ -78,6 +79,8 @@ def cmmdDropDB(instr) :
         #if you deleted the database you are currently using, remove that from global
         if currDb == instr.database :
             currDb = ""
+            global database
+            database = None
 
 def cmmdCreateTable(instr) :
     #If you aren't currently using a database, throw an error
