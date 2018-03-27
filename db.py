@@ -6,7 +6,12 @@
 #Version 1: Defines the Table and Database objects
 
 from parser import Instruction
+<<<<<<< HEAD
 import operator
+=======
+import os
+import sys
+>>>>>>> f0e7ea29cc54d7b4c5b1ba87d1588884fb094eb6
 
 class Table:
     def __init__(self, tbname, dbname, exists):
@@ -158,7 +163,7 @@ class DB:
     def addMetaData(self):
         f = open(self.name + "/" + self.name + ".txt", "w")
         for tb in self.tables:
-            f.write(tb.tableName)
+            f.write(tb.tableName + "\n")
         f.close()
 
     #Creates a new table in this database
@@ -166,7 +171,7 @@ class DB:
     def createTable(self, tbName, attrPairs):
         #First update the metadata file
         f = open(self.name + "/" + self.name + ".txt", "a")
-        f.write(tbName + ".txt")#Assuming that this creates a new line
+        f.write(tbName + ".txt\n")#Assuming that this creates a new line
         f.close()
 
         #Now, create the table
