@@ -1,10 +1,10 @@
 #Primary Author: Gage Thomas
 #Secondary Author: Jake Shepherd
 #Class: CS 457
-#Date: 2/20/2017
-#Version 1: Allows user to create and drop databases and tables and display
-#           everything with a Select * query
-#           Alter table is also implemented, as well as USE 
+#Date: 3/26/2018
+#Version 2: Updated to handle PA2 commands. This file does the error handling,
+#           db.py does the bulk of the implementation, with a few exceptions
+#           such as drop database.
 
 import os
 import sys
@@ -94,13 +94,6 @@ def cmmdCreateTable(instr) :
         print("!Failed to create table %s because it already exists." % instr.tableUsed)
 
     else :
-        #os.system("touch " + currDb + "/" + instr.tableUsed + ".txt")
-        #fout = open(currDb + "/" + instr.tableUsed + ".txt", "w")
-        #write each of the attributes
-        #for attr in instr.attrPairs:
-         #   fout.write("{} {} ".format(attr[0], attr[1]))
-
-        #fout.close();
         database.createTable(instr.tableUsed, instr.attrPairs)
         print("Table %s created." % instr.tableUsed)
 
@@ -113,7 +106,6 @@ def cmmdDropTable(instr) :
     elif not os.path.isfile(currDb + "/" + instr.tableUsed + ".txt") :
         print("!Failed to delete %s because it does not exist." % instr.tableUsed)
     else :
-        #os.remove(currDb + "/" + instr.tableUsed + ".txt")
         global database
         database.dropTable(instr.tableUsed)
         print("Table %s deleted." % instr.tableUsed)
@@ -144,6 +136,7 @@ def cmdInsert(instr):
             print("1 new record inserted.")
 
 #Assumes for now that it is alter table add
+#Updated to use db object, functioning
 def cmmdAlterTable(instr) :
     #until we start saving data in memory, we'll have to read every line and rewrite it
     if currDb == "":
@@ -151,20 +144,6 @@ def cmmdAlterTable(instr) :
     elif not os.path.isfile(currDb + "/" + instr.tableUsed + ".txt"):
         print("!Failed to alter table %s since it does not exist." % instr.tableUsed)
     else:
-        #f = open(currDb + "/" + instr.tableUsed + ".txt", "r+")
-        #attrs = f.readline().split()
-
-        # Remove file
-        #f.close()
-        #os.remove(currDb + "/" + instr.tableUsed + ".txt")
-        # add new attr
-        #attrs.append(instr.attrPairs[0][0])
-        #attrs.append(instr.attrPairs[0][1])
-        #rewrite
-        #f = open(currDb + "/" + instr.tableUsed + ".txt", "w+")
-        #for attr in attrs:
-           #f.write("{} ".format(attr))
-        #f.close()
         global database
         database.getTable(instr.tableUsed).alter(instr.attrPairs[0][0], instr.attrPairs[0][1])
 

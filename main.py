@@ -2,8 +2,10 @@
 #Primary Author: Jake Shepherd
 #Secondary Author: Gage Thomas
 #Class: CS 457
-#Date: 2/20/2017
+#Date: 3/26/2018
 #Version 2: Program start - reads user input and interprets instructions
+#           Can handle multi-line commands now
+#           No longer supports reading in a file of commands, redirect input instead
 import sys
 from parser import Parser
 from db_manager import executeCommand

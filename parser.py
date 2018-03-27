@@ -1,8 +1,13 @@
 # parser.py -- Defines the objects and methods used for parsing the SQL statements
 # Author - Jake Shepherd
 # Class: CS 457
-# Date: 2/20/2018
-# Version 1: Defines two class objects. The first is the instruction class which saves information about parsed instructions. This info can be used when processing the instruction. The second class defines the parser, which is in charge of reading the SQL commands and creating instructions that can be understood.
+# Date: 3/26/2018
+# Version 2: Defines two class objects. 
+#The first is the instruction class which saves information about parsed instructions.
+#This info can be used when processing the instruction.
+#The second class defines the parser, which is in charge of reading the SQL commands
+#and creating instructions that can be understood.
+#Is now updated to handle PA2 commands
 
 class Instruction:
 
