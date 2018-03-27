@@ -6,6 +6,8 @@
 #Version 1: Defines the Table and Database objects
 
 from parser import Instruction
+import os
+import sys
 
 class Table:
     def __init__(self, tbname, dbname, exists):

@@ -102,6 +102,7 @@ def cmmdCreateTable(instr) :
         database.createTable(instr.tableUsed, instr.attrPairs)
         print("Table %s created." % instr.tableUsed)
 
+#Updated to use db object, functioning
 def cmmdDropTable(instr) :
     #If you aren't currently using a database, throw an error
     if currDb == "" :
@@ -110,7 +111,8 @@ def cmmdDropTable(instr) :
     elif not os.path.isfile(currDb + "/" + instr.tableUsed + ".txt") :
         print("!Failed to delete %s because it does not exist." % instr.tableUsed)
     else :
-        os.remove(currDb + "/" + instr.tableUsed + ".txt")
+        #os.remove(currDb + "/" + instr.tableUsed + ".txt")
+        database.dropTable(instr.tableUsed)
         print("Table %s deleted." % instr.tableUsed)
 
 def cmmdSelect(instr) :
