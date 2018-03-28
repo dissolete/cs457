@@ -21,7 +21,7 @@ The select function in Table returns a 2D list storing the actual selected data.
 
 
 Tuple Deletion and Modification:
-Both of these functions use a similar strategy to the Query implementation.
+Both of these functions use a similar strategy to the Query implementation. For deletion, the correct attribute column that is being tested in the where statement is identified, the tuples are searched and marked in a list for deletion, and then those tuples are removed from the data before the data is rewritten to the file. Update, meanwhile, goes through the same search process but instead of marking tuples for deletion, the data in the object is rewritten in accordance with the query before the data is rewritten to the file.
 
 
 High-level Implementation Details:
