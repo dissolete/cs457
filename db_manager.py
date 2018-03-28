@@ -35,6 +35,10 @@ def executeCommand(instr):
         cmmdAlterTable(instr)
     elif instr.primaryInstruction == "insert":
         cmdInsert(instr)
+    elif instr.primaryInstruction == "update":
+        cmdUpdateTable(instr)
+    elif instr.primaryInstruction == "delete":
+        cmdDelete(instr)
     elif instr.primaryInstruction == "exit" :
         cmmdExit(instr)
 
@@ -120,7 +124,12 @@ def cmmdSelect(instr) :
         table = database.getTable(instr.tableUsed)
         if table:
             results = table.select(instr.attributes, instr.whereClause)
-            print(results)
+            
+            # Print the results in a nice way
+            for row in results:
+                for c in range(0, len(row) - 1):
+                    print(row[c] + " | ", end='')
+                print(row[len(row) - 1])
 
 def cmdInsert(instr):
     if currDb == "":
@@ -134,6 +143,35 @@ def cmdInsert(instr):
         if table:
             table.insert(instr.insertValues)
             print("1 new record inserted.")
+def cmdUpdateTable(instr):
+
+    if currDb == "":
+        print("!Failed to update table since no database is being used.")
+
+    elif not os.path.isfile(currDb + "/" + instr.tableUsed + ".txt"):
+        print("!Failed to update into table %s since it does not exist." % instr.tableUsed)
+    else:
+        table = database.getTable(instr.tableUsed)
+        if table:
+            numRowsUpdated = table.update(instr.updateAttributeName, instr.updateSetToValue, instr.whereClause)
+            if numRowsUpdated > 1 or numRowsUpdated == 0:
+                print("{} records modified.".format(numRowsUpdated))
+            else:
+                print("1 record modified.")
+def cmdDelete(instr):
+    if currDb == "":
+        print("!Failed to delete from table since no database is being used.")
+
+    elif not os.path.isfile(currDb + "/" + instr.tableUsed + ".txt"):
+        print("!Failed to delete from table %s since it does not exist." % instr.tableUsed)
+    else:
+        table = database.getTable(instr.tableUsed)
+        if table:
+            numRowsUpdated = table.delete(instr.whereClause)
+            if numRowsUpdated > 1 or numRowsUpdated == 0:
+                print("{} records deleted.".format(numRowsUpdated))
+            else:
+                print("1 record deleted.")
 
 #Assumes for now that it is alter table add
 #Updated to use db object, functioning

@@ -10,6 +10,7 @@ from parser import Instruction
 import operator
 import os
 import sys
+import copy
 
 class Table:
     def __init__(self, tbname, dbname, exists):
@@ -80,8 +81,7 @@ class Table:
         
         # If where clause is empty, then we are simply returning every row
         if len(whereClause) == 0:
-            results = self.attributeValues
-            filteredResults = results
+            results = copy.deepcopy(self.attributeValues)
         else:
 
             # Attribute that we are using in the where clause
@@ -93,7 +93,7 @@ class Table:
             # Assign the attributeNum to the correct col number
             for n in range(0, len(self.attributeNames)):
                 if self.attributeNames[n] == whereClause[0]:
-                    attributeNume = n
+                    attributeNum = n
                     break
 
             # Search through tuples
@@ -104,10 +104,13 @@ class Table:
                 # what im gonna do :(
                 if self.attributeTypes[attributeNum] == "float":
                     lefthandCasted = float(self.attributeValues[rowNum][attributeNum])
-                    rightHandCasted = float(whereClause[2])
+                    righthandCasted = float(whereClause[2])
                 elif self.attributeTypes[attributeNum] == "int":
                     lefthandCasted = int(self.attributeValues[rowNum][attributeNum])
                     righthandCasted = int(whereClause[2])
+                else:
+                    lefthandCasted = self.attributeValues[rowNum][attributeNum]
+                    righthandCasted = whereClause[2]
 
                 if self.operators[whereClause[1]](lefthandCasted, righthandCasted):
                     results.append(self.attributeValues[rowNum])
@@ -115,12 +118,23 @@ class Table:
         # Now we filter what we display
         if len(attributes) == 0:
             # If not attribute names specified, this is a select *
-            filteredResults = results
-        else:
+            filteredResults = copy.deepcopy(results)
             newRow = []
-            
+            for i in range(0, len(self.attributeNames)):
+                newRow.append(self.attributeNames[i] + " " + self.attributeTypes[i])
+            filteredResults.insert(0, newRow)
+        else:
+            #first we add the column names with their type
+            newRow = []
+            for i in range(0, len(self.attributeNames)):
+                if self.attributeNames[i] in attributes:
+                    newRow.append(self.attributeNames[i] + " " + self.attributeTypes[i])
+            filteredResults.append(newRow)
+
+            # Then, we filter out all of the attributes we dont want to select
+
             for r in range(0, len(results)):
-                newRow.clear()
+                newRow = []
                 for c in range(0, len(results[r])):
                     
                     if self.attributeNames[c] in attributes:
@@ -128,6 +142,47 @@ class Table:
                 filteredResults.append(newRow)
 
         return filteredResults
+
+    def delete(self, whereClause):
+        attributeNum = 0
+        lefthandCasted = None 
+        righthandCasted = None
+        numRowsAffected = 0
+        rowsToDelete = []
+        # Assign the attributeNum to the correct col number
+        for n in range(0, len(self.attributeNames)):
+            if self.attributeNames[n] == whereClause[0]:
+                attributeNum = n
+                break
+
+        # Search through tuples
+        for rowNum in range(0, len(self.attributeValues)):
+            # First we have to make sure to cast the attribute
+            # in question to the correct type
+            # I really dont wanna check this like this, but its 
+            # what im gonna do :(
+            if self.attributeTypes[attributeNum] == "float":
+                lefthandCasted = float(self.attributeValues[rowNum][attributeNum])
+                righthandCasted = float(whereClause[2])
+            elif self.attributeTypes[attributeNum] == "int":
+                lefthandCasted = int(self.attributeValues[rowNum][attributeNum])
+                righthandCasted = int(whereClause[2])
+            else:
+                lefthandCasted = self.attributeValues[rowNum][attributeNum]
+                righthandCasted = whereClause[2]
+            if self.operators[whereClause[1]](lefthandCasted, righthandCasted):        
+                # mark this row for deletion later
+                rowsToDelete.append(rowNum)
+                numRowsAffected += 1
+
+        # delete rows that have been marked
+        for n in range(0, len(rowsToDelete)):
+            self.attributeValues.pop(rowsToDelete[n] - n)
+
+        # make permanent 
+        self.write_to_file()
+        return numRowsAffected
+
 
 #Use to insert a new tuple into the table
 #Tup is a list that is the tuple that should be added
@@ -150,6 +205,46 @@ class Table:
         for tupleNum in range(0, len(self.attributeValues), 1):
             self.attributeValues[tupleNum].append("NULL")
         self.write_to_file()
+
+    def update(self, updateAttrName, updateSetToVal, whereClause):
+        # Filter attrs by where clause
+        # Attribute that we are using in the where clause
+        attributeNum = 0
+        lefthandCasted = None 
+        righthandCasted = None
+        numRowsAffected = 0
+
+        # Assign the attributeNum to the correct col number
+        for n in range(0, len(self.attributeNames)):
+            if self.attributeNames[n] == whereClause[0]:
+                attributeNum = n
+                break
+
+        # Search through tuples
+        for rowNum in range(0, len(self.attributeValues)):
+            # First we have to make sure to cast the attribute
+            # in question to the correct type
+            # I really dont wanna check this like this, but its 
+            # what im gonna do :(
+            if self.attributeTypes[attributeNum] == "float":
+                lefthandCasted = float(self.attributeValues[rowNum][attributeNum])
+                righthandCasted = float(whereClause[2])
+            elif self.attributeTypes[attributeNum] == "int":
+                lefthandCasted = int(self.attributeValues[rowNum][attributeNum])
+                righthandCasted = int(whereClause[2])
+            else:
+                lefthandCasted = self.attributeValues[rowNum][attributeNum]
+                righthandCasted = whereClause[2]
+            if self.operators[whereClause[1]](lefthandCasted, righthandCasted):
+                for c in range(0, len(self.attributeValues[rowNum])):
+                    if self.attributeNames[c] == updateAttrName:
+                        self.attributeValues[rowNum][c] = updateSetToVal
+                        numRowsAffected += 1
+
+        # make permanent 
+        self.write_to_file()
+
+        return numRowsAffected
 
     #Used when a previously non-existent table is made to add all attributes
     #Attribute pairs is a 2D array where each row is an attribute name and
@@ -210,6 +305,8 @@ class DB:
             if(tb.tableName.lower() == tbName.lower()):
                 return tb
         return None
+    
+
 
 #Used to drop a single table
     def dropTable(self, tbName):
