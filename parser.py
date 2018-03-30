@@ -24,6 +24,19 @@ class Instruction:
         # Table used by instruction
         self.tableUsed = ""
 
+        # Join on this table
+        self.joinTable = ""
+
+        # Join type
+        # ex
+        # inner
+        # left
+        # right
+        # left outer
+        # right outer
+        # full outer 
+        self.joinType = ""
+
         # Database used by instruction (only used by USE instruction)
         self.database = ""
 
@@ -64,6 +77,7 @@ class Parser:
 
     def __init__(self):
         self.singleInstruction = Instruction()
+        self.joinWords = ["left", "inner", "right", "full", "outer"]
         
     # Prints the instructions generated after parsing
     # Primarily used for debug purposes
@@ -75,8 +89,8 @@ class Parser:
             print("updateAttributeName: {}".format(i.updateAttributeName, end=''))
             print("updateSetToValue: {}".format(i.updateSetToValue, end=''))
             print("insertValues: {}".format(i.insertValues, end=''))
-
-
+            print("joinTable: {}".format(i.joinTable))
+            print("joinType: {}".format(i.joinType))
 
     # Parses line and creates instruction metadata
     # Lots of array splicing going on. Not intended to be completely readable :)
@@ -110,20 +124,60 @@ class Parser:
             i.primaryInstruction = "select"
 
             # Check if SELECT *
-            if(line.split()[1] == "*"):
-                i.tableUsed = (line.split()[3]).replace(';', '').lower()
-            else:
+            if(line.split()[1] != "*"):
                 #fetch attrs 1 by 1 until the keywork from is found
                 ws = line[7:].split()
                 for k in range(0, len(ws)):
                     if ws[k] != "from":
                         i.attributes.append(ws[k].lower().replace(',', ''))
                     else:
+                        # found the from keyword, parse the table names
+                        # for possible joins
+
+                        # The first table used is always after the keyword from
                         i.tableUsed = ws[k+1].replace(';', '')
+
                         break
 
-            # look for the where keyword
+            # Finding the next table relies on two cases
+            # The first is when the tables are listed
+            # The second is when the join type is explicit
+            # Lets look at the next word after the usr supplied name
+            ws = line[line.find("from"):].split()
+            print(ws)
+            l = 2
+            word = ws[l].lower()
+            print("word: " + word)   
+            # This word is either a tablename or a specific keyword
+            # Check if it is a jon word
+            if ws[l+1] in self.joinWords:
+                # check we have an outer join
+                if ws[l+2] == "outer":      
+                    # cool so the join is a combo of the
+                    # first join word and this outer
+                    i.joinType = ws[l+1].lower() + " " + ws[l+2]
+                    # then i + 3 is the word 'join' and i + 4 is the join table name
+                    i.joinTable = ws[l+4]
+                else:
+                    # here there is no "outer" join, then the join type is just ws[i]
+                    i.joinType = ws[l+1].lower()
+                    # and the join table is i + 3
+                    i.joinTable = ws[l+3]
+            else:
+                # Otherwise, the tables are listed
+                i.joinTable = ws[l+1]
+                i.joinType = "inner"
+
+            # look for the where keyword or the on keyword
+            # these two are parsed the same
             ws = line[line.find("where"):]
+            
+            # if the length of ws is 0, then the where clause was not found
+            # and so the on keyword is probably used
+            if len(ws) == 0:
+                ws = line[line.find("on"):]
+
+            # now parse the thing
             self.parse_where_clauses(ws, i)
                 
 

@@ -28,8 +28,8 @@ def main():
         print(userInput)
         leParser.parse(userInput)
         # Uncomment this line to see how the instructions are created
-        # leParser.print()
-        executeCommand(leParser.singleInstruction)
+        leParser.print()
+        #executeCommand(leParser.singleInstruction)
 
 if __name__ == "__main__":
     # execute main function :) just some fancy python stuff here no worries
