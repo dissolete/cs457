@@ -193,6 +193,7 @@ def cmmdAlterTable(instr) :
 
         print("Table {} altered.".format(instr.tableUsed))
 def cmmdExit(instr) :
+    print("All done.")
     sys.exit()
 
 def cmmdJoin(instr) :
