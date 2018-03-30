@@ -37,6 +37,10 @@ class Instruction:
         # full outer 
         self.joinType = ""
 
+        # User supplied aliases for the table names
+        self.leftAlias = ""
+        self.rightAlias = ""
+
         # Database used by instruction (only used by USE instruction)
         self.database = ""
 
@@ -91,6 +95,7 @@ class Parser:
             print("insertValues: {}".format(i.insertValues, end=''))
             print("joinTable: {}".format(i.joinTable))
             print("joinType: {}".format(i.joinType))
+            print("left/right alias: {} {} ".format(i.leftAlias, i.rightAlias))
 
     # Parses line and creates instruction metadata
     # Lots of array splicing going on. Not intended to be completely readable :)
@@ -138,6 +143,8 @@ class Parser:
                         i.tableUsed = ws[k+1].replace(';', '')
 
                         break
+            else:
+                i.tableUsed = line.split()[3].replace(';','')
 
             # Finding the next table relies on two cases
             # The first is when the tables are listed
@@ -158,23 +165,34 @@ class Parser:
                     i.joinType = ws[l+1].lower() + " " + ws[l+2]
                     # then i + 3 is the word 'join' and i + 4 is the join table name
                     i.joinTable = ws[l+4]
+
+                    # get right alias
+                    i.rightAlias = ws[l+5]
                 else:
                     # here there is no "outer" join, then the join type is just ws[i]
                     i.joinType = ws[l+1].lower()
                     # and the join table is i + 3
                     i.joinTable = ws[l+3]
+
+                    # get right alias
+                    i.rightAlias= ws[l+4]
+
+
             else:
                 # Otherwise, the tables are listed
                 i.joinTable = ws[l+1]
                 i.joinType = "inner"
+                i.rightAlias = ws[l+2]
 
+            i.leftAlias = ws[l].replace(',', '')
             # look for the where keyword or the on keyword
             # these two are parsed the same
             ws = line[line.find("where"):]
             
             # if the length of ws is 0, then the where clause was not found
             # and so the on keyword is probably used
-            if len(ws) == 0:
+
+            if len(ws) <= 1:
                 ws = line[line.find("on"):]
 
             # now parse the thing
@@ -254,5 +272,5 @@ class Parser:
         instruction.updateSetToValue = parts[3]
 
     def parse_values(self, valuesLine, instruction):
-        parts = valuesLine[6:].replace('(', '').replace(')', '').replace('\'', '').replace(',', '').replace(';', '').split()
+        parts = valuesLine[6:].replace('(', '').replace(')', '').replace('\'', '').replace(' ', '').replace(';', '').split(',')
         instruction.insertValues = parts
