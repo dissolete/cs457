@@ -1,7 +1,10 @@
 #Primary Author: Gage Thomas
 #Secondary Author: Jake Shepherd
 #Class: CS 457
-#Date: 3/26/2018
+#Date: 3/29/2018
+#Version 3: Updated for join support. Select instructions can now be differentiated
+#into standard selects and selects that join two tables.
+
 #Version 2: Updated to handle PA2 commands. This file does the error handling,
 #           db.py does the bulk of the implementation, with a few exceptions
 #           such as drop database.
@@ -194,4 +197,3 @@ def cmmdExit(instr) :
 
 def cmmdJoin(instr) :
     DB.joinTables(instr.tableUsed, instr.joinTable, instr.leftAlias, instr.rightAlias, instr.whereClause, instr.joinType)
-    
