@@ -30,7 +30,10 @@ def executeCommand(instr):
     elif instr.primaryInstruction == "drop table" :
         cmmdDropTable(instr)
     elif instr.primaryInstruction == "select" :
-        cmmdSelect(instr)
+        if instr.joinType != "":
+            cmmdSelect(instr)
+        else:
+            cmmdJoin(instr)
     elif instr.primaryInstruction == "alter table" :
         cmmdAlterTable(instr)
     elif instr.primaryInstruction == "insert":
@@ -188,3 +191,7 @@ def cmmdAlterTable(instr) :
         print("Table {} altered.".format(instr.tableUsed))
 def cmmdExit(instr) :
     sys.exit()
+
+def cmmdJoin(instr) :
+    DB.joinTables(instr.tableUsed, instr.joinTable, instr.leftAlias, instr.rightAlias, instr.whereClause, instr.joinType)
+    

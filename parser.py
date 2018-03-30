@@ -151,10 +151,10 @@ class Parser:
             # The second is when the join type is explicit
             # Lets look at the next word after the usr supplied name
             ws = line[line.find("from"):].split()
-            print(ws)
+            
             l = 2
             word = ws[l].lower()
-            print("word: " + word)   
+         
             # This word is either a tablename or a specific keyword
             # Check if it is a jon word
             if ws[l+1] in self.joinWords:

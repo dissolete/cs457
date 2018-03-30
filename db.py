@@ -322,3 +322,48 @@ class DB:
         self.addMetaData()
 
     #Drop databases using db_manager
+
+    #Used to join and print the joined tables
+    def joinTables(self, leftName, rightName, leftAlias, rightAlias, whereClause, joinType):
+        leftTable = self.getTable(leftName)
+        rightTable = self.getTable(rightName)
+        leftCompare = 0
+        rightCompare = 0
+
+        #Get the column numbers for join comparison
+        for n in range(0, len(leftTable.attributeNames)):
+            if leftTable.attributeNames[n] == whereClause[0].split(".")[1]:
+                leftCompare = n
+                break
+
+        for n in range(0, len(rightTable.attributeNames)):
+            if rightTable.attributeNames[n] == whereClause[2].split(".")[1]:
+                rightCompare = n
+                break
+
+        #Print the header
+        for n in range(0, len(leftTable.attributeNames)):
+            print("{} {} | ".format(leftTable.attributeNames[n], leftTable.attributeTypes[n]), end="" )
+#Print the right table's header
+        for n in range(0, len(rightTable.attributeNames)):
+            if n != rightCompare:
+                if n < (len(rightTable.attributeNames) - 1):
+                    print("{} {} | ".format(rightTable.attributeNames[n], rightTable.attributeTypes[n]), end="" )
+                else :
+                    print("{} {}".format(rightTable.attributeNames[n], rightTable.attributeTypes[n]), end="" )
+
+        #Now join any tuples using a nested loop join, checking to see if any tuple
+        #is left out on the left hand side and printing it if it is a left outer join
+
+        for leftTuple in leftTable.attributeValues :
+            wasMatched = False
+
+            for rightTuple in rightTable.attributeValues :
+
+                if leftTuple[leftCompare] == rightTuple[rightCompare]:
+                    wasMatched = True
+                    self.printTuple(leftTuple, False)
+                    self.printTuple(rightTuple, True, rightCompare)
+            if (not wasMatched) and (joinType == "left outer"):
+                self.printTuple(leftTuple, False)
+                self.printTuple([""] * len(rightTable.attributeNames), True, rightCompare)
