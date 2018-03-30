@@ -30,7 +30,7 @@ def executeCommand(instr):
     elif instr.primaryInstruction == "drop table" :
         cmmdDropTable(instr)
     elif instr.primaryInstruction == "select" :
-        if instr.joinType != "":
+        if instr.joinType == "":
             cmmdSelect(instr)
         else:
             cmmdJoin(instr)
@@ -193,5 +193,5 @@ def cmmdExit(instr) :
     sys.exit()
 
 def cmmdJoin(instr) :
-    DB.joinTables(instr.tableUsed, instr.joinTable, instr.leftAlias, instr.rightAlias, instr.whereClause, instr.joinType)
+    database.joinTables(instr.tableUsed, instr.joinTable, instr.leftAlias, instr.rightAlias, instr.whereClause, instr.joinType)
     

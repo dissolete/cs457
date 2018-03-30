@@ -351,6 +351,7 @@ class DB:
                     print("{} {} | ".format(rightTable.attributeNames[n], rightTable.attributeTypes[n]), end="" )
                 else :
                     print("{} {}".format(rightTable.attributeNames[n], rightTable.attributeTypes[n]), end="" )
+        print(" ")
 
         #Now join any tuples using a nested loop join, checking to see if any tuple
         #is left out on the left hand side and printing it if it is a left outer join
@@ -363,7 +364,18 @@ class DB:
                 if leftTuple[leftCompare] == rightTuple[rightCompare]:
                     wasMatched = True
                     self.printTuple(leftTuple, False)
-                    self.printTuple(rightTuple, True, rightCompare)
+                    self.printTuple(rightTuple, True)
             if (not wasMatched) and (joinType == "left outer"):
                 self.printTuple(leftTuple, False)
-                self.printTuple([""] * len(rightTable.attributeNames), True, rightCompare)
+                self.printTuple([""] * len(rightTable.attributeNames), True)
+            print(" ")
+
+    def printTuple(self, tupleToPrint, printAllFlag):
+        l = len(tupleToPrint)
+        for n in range(0, l):
+            print("{}|".format(tupleToPrint[n]), end='')
+
+            if n == l - 1 and not printAllFlag:
+                print(tupleToPrint[n],end='')
+            elif n == l - 1:
+                print(tupleToPrint[n] + "|",end='')

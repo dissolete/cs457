@@ -117,7 +117,7 @@ class Parser:
 
         elif line.lower().startswith("create table"):
             i.primaryInstruction = "create table"
-            i.tableUsed = line.split()[2].lower()
+            i.tableUsed = line.split()[2].split('(')[0].lower()
             self.parse_attr_pairs(line[line.find("("):len(line)], i) 
             valid = True;
         elif line.lower().startswith("drop table"):
@@ -140,11 +140,11 @@ class Parser:
                         # for possible joins
 
                         # The first table used is always after the keyword from
-                        i.tableUsed = ws[k+1].replace(';', '')
+                        i.tableUsed = ws[k+1].replace(';', '').lower()
 
                         break
             else:
-                i.tableUsed = line.split()[3].replace(';','')
+                i.tableUsed = line.split()[3].replace(';','').lower()
 
             # Finding the next table relies on two cases
             # The first is when the tables are listed
