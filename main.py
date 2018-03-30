@@ -2,7 +2,9 @@
 #Primary Author: Jake Shepherd
 #Secondary Author: Gage Thomas
 #Class: CS 457
-#Date: 3/26/2018
+#Date: 3/29/2018
+#Version 3: No changes, but Parser and db_manager now support joins
+
 #Version 2: Program start - reads user input and interprets instructions
 #           Can handle multi-line commands now
 #           No longer supports reading in a file of commands, redirect input instead

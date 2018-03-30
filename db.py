@@ -2,7 +2,10 @@
 #           and writing to files
 #Author - Gage Thomas, Jake Shepherd (secondary)
 #Class: CS 457
-#Date: 3/12/2018
+#Date: 3/29/2018
+#Version 2: Now supports join commands. Will properly join two tables on the
+#specified attributes in the where or on clause.
+
 #Version 1: Defines the Table and Database objects for handling the implementation
 #           of commands
 
@@ -323,7 +326,8 @@ class DB:
 
     #Drop databases using db_manager
 
-    #Used to join and print the joined tables
+    #Used to join and print the joined tables. Attributes that are joined on are printed
+    #twice, per specified output
     def joinTables(self, leftName, rightName, leftAlias, rightAlias, whereClause, joinType):
         leftTable = self.getTable(leftName)
         rightTable = self.getTable(rightName)

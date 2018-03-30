@@ -1,7 +1,13 @@
 # parser.py -- Defines the objects and methods used for parsing the SQL statements
 # Author - Jake Shepherd
 # Class: CS 457
-# Date: 3/26/2018
+# Date: 3/29/2018
+#Version 3: Adding join support
+#This version of the parser has additional support to identify joins and the type of
+#join being done. Aliases can also be identified. Because of these two features, 
+#Instruction now has several more fields to track a table to join on, the type of join,
+#and the aliases of the left and right tables.
+
 # Version 2: Defines two class objects. 
 #The first is the instruction class which saves information about parsed instructions.
 #This info can be used when processing the instruction.
