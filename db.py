@@ -372,14 +372,22 @@ class DB:
             if (not wasMatched) and (joinType == "left outer"):
                 self.printTuple(leftTuple, False)
                 self.printTuple([""] * len(rightTable.attributeNames), True)
-            print(" ")
 
-    def printTuple(self, tupleToPrint, printAllFlag):
+    #This function prints half of a row while printing joined tables.
+    #If omitBar is set, this is the right table's tuple and there should not be
+    #a | at the end of the line. In addition, it will print the new line if
+    #omitBar is set, otherwise, the line will not end and there will be a |
+    #between the left tuple's last attribute and the right tuple's first
+    def printTuple(self, tupleToPrint, omitBar):
         l = len(tupleToPrint)
-        for n in range(0, l):
-            print("{}|".format(tupleToPrint[n]), end='')
 
-            if n == l - 1 and not printAllFlag:
-                print(tupleToPrint[n],end='')
-            elif n == l - 1:
-                print(tupleToPrint[n] + "|",end='')
+        for n in range(0, l):
+
+            if (n < l - 1) or (not omitBar):
+                print("{} | ".format(tupleToPrint[n]), end="")
+            else :
+                print("{}".format(tupleToPrint[n]), end="")
+
+        #If omitBar is set, print the new line
+        if omitBar :
+            print("")
