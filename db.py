@@ -148,7 +148,7 @@ class Table:
         return filteredResults
 
     def delete(self, whereClause):
-        if not check_proceed():
+        if not self.check_proceed():
             return
 
         attributeNum = 0
@@ -195,7 +195,7 @@ class Table:
 #Use to insert a new tuple into the table
 #Tup is a list that is the tuple that should be added
     def insert(self, tup):
-        if not check_proceed():
+        if not self.check_proceed():
             return
         f = open(self.dbName + "/" + self.tableName + ".txt", "a")
         newTup = ""
@@ -208,7 +208,7 @@ class Table:
 #Alter the table by adding a new attribute, sets its value to "NULL"
 #For each existing tuple, writes result to file
     def alter(self, newName, newType):
-        if not check_proceed():
+        if not self.check_proceed():
             return
         self.attributeNames.append(newName)
         self.attributeTypes.append(newType)
@@ -221,7 +221,7 @@ class Table:
             self.write_to_file()
 
     def update(self, updateAttrName, updateSetToVal, whereClause):
-        if not check_proceed():
+        if not self.check_proceed():
             return
         # Filter attrs by where clause
         # Attribute that we are using in the where clause
@@ -275,16 +275,18 @@ class Table:
         if not self.db.inTransaction :
             self.write_to_file()
     
-    def check_proceed():
+    def check_proceed(self):
         if os.path.isfile(self.dbName + "/" + self.tableName + "_lock.txt"):
             print("Error: Table {} is locked!".format(self.tableName))
+            self.db.errorOccured = True
             return False
         else:
             if self.db.errorOccurred:
                 return False
 
-            os.system("touch {}/{}_lock.txt".format(self.dbName, self.tableName)
+            os.system("touch {}/{}_lock.txt".format(self.dbName, self.tableName))
             return True
+
         
     #Need to add select, modify, and delete commands
     #Need to add PA2 commands
@@ -295,7 +297,8 @@ class DB:
     def __init__(self, theName, exists):
         self.name = theName
         self.tables = []#list of table objects
-        self.inTransaction = False;#stores whether or not currently in transaction
+        self.inTransaction = False #stores whether or not currently in transaction
+        self.errorOccured = False
 
 #If the database already exists, read in all of its data
 #NEED TO CREATE A METADATA FILE IN THE DIRECTORY OF THE DATABASE
