@@ -206,3 +206,10 @@ def cmmdJoin(instr) :
 def cmmdBeginTrans(instr) :
     database.inTransaction = True;
     database.errorOcurred = False;
+
+def cmmdCommit(instr) :
+    if not database.errorOcurred :
+        database.writeAllTables
+    else :
+        print("Transaction abort.")
+    database.inTransaction = False;

@@ -399,3 +399,10 @@ class DB:
         #If omitBar is set, print the new line
         if omitBar :
             print("")
+
+    #Writes all tables to the disk after a commit if no error occurred
+    #(handled by db_manager)
+    def writeAllTables(self) :
+
+        for tb in self.tables :
+            tb.write_to_file()
