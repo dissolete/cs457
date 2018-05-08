@@ -126,6 +126,7 @@ class Parser:
             i.tableUsed = line.split()[2].split('(')[0].lower()
             self.parse_attr_pairs(line[line.find("("):len(line)], i) 
             valid = True;
+
         elif line.lower().startswith("drop table"):
             i.primaryInstruction = "drop table"
             i.tableUsed = (line.split()[-1])[:-1].lower()
@@ -133,6 +134,13 @@ class Parser:
 
         elif line.lower().startswith("select"):
             i.primaryInstruction = "select"
+
+            if(len(line.split()) == 4):
+                i.tableUsed = line.split()[3].replace(';', '')
+                valid = True
+                self.singleInstruction = i
+                return
+
 
             # Check if SELECT *
             if(line.split()[1] != "*"):
@@ -249,6 +257,12 @@ class Parser:
         elif line.lower().startswith(".exit"):
             i.primaryInstruction = "exit"
             valid = True;
+        elif line.lower().startswith("begin"):
+            i.primaryInstruction = "begin"
+            valid = True
+        elif line.lower().startswith("commit;"):
+            i.primaryInstruction = "commit"
+            valid = True
 
         if valid:
             self.singleInstruction = i
