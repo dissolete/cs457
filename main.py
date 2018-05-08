@@ -27,7 +27,7 @@ def main():
             temp = input().strip()
             userInput = userInput + " " + temp                
 
-        print(userInput)
+        #print(userInput)
         leParser.parse(userInput)
         # Uncomment this line to see how the instructions are created
         #leParser.print()

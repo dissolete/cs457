@@ -207,10 +207,12 @@ def cmmdJoin(instr) :
 def cmmdBeginTrans(instr) :
     database.inTransaction = True;
     database.errorOcurred = False;
+    print("Transaction starts.")
 
 def cmmdCommit(instr) :
-    if not database.errorOcurred :
-        database.writeAllTables
+    if not database.errorOccurred :
+        database.writeAllTables()
+        print("Transaction committed.")
         for tb in database.tables :
             if os.path.isfile(currDb+"/"+tb.tableName + "_lock.txt"):
                 os.remove(currDb + "/" + tb.tableName + "_lock.txt");

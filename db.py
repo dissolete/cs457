@@ -82,7 +82,10 @@ class Table:
         f.close()
 
     def select(self, attributes, whereClause):
-        self.load()
+        
+        #If not in a transaction, load most recent data from disk
+        if not self.db.inTransaction:
+            self.load()
 
         # The results after the where filter
         results = []
