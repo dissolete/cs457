@@ -206,3 +206,14 @@ def cmmdJoin(instr) :
 def cmmdBeginTrans(instr) :
     database.inTransaction = True;
     database.errorOcurred = False;
+
+def cmmdCommit(instr) :
+    if not database.errorOcurred :
+        database.writeAllTables
+    else :
+        print("Transaction abort.")
+    database.inTransaction = False;
+
+    #Now remove all lock files
+    for tb in database.tables :
+        os.remove(currDb + "/" + tb.tableName + "_lock.txt");
