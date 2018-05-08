@@ -16,10 +16,11 @@ import sys
 import copy
 
 class Table:
-    def __init__(self, tbname, dbname, exists):
+    def __init__(self, tbname, dbname, exists, theDb):
         #Stores the table's name
         self.tableName = tbname
         self.dbName = dbname
+        self.db = theDb;#pointer back to the actual db
         #Read in the data for the table
         self.attributeTypes = []
         self.attributeNames = []
@@ -182,8 +183,9 @@ class Table:
         for n in range(0, len(rowsToDelete)):
             self.attributeValues.pop(rowsToDelete[n] - n)
 
-        # make permanent 
-        self.write_to_file()
+        # make permanent
+        if not self.db.inTransaction : 
+            self.write_to_file()
         return numRowsAffected
 
 
@@ -207,7 +209,9 @@ class Table:
         #Now add all the NULL values for the new attribute
         for tupleNum in range(0, len(self.attributeValues), 1):
             self.attributeValues[tupleNum].append("NULL")
-        self.write_to_file()
+
+        if not self.db.inTransaction:
+            self.write_to_file()
 
     def update(self, updateAttrName, updateSetToVal, whereClause):
         # Filter attrs by where clause
@@ -245,7 +249,8 @@ class Table:
                         numRowsAffected += 1
 
         # make permanent 
-        self.write_to_file()
+        if not self.db.inTransaction :
+            self.write_to_file()
 
         return numRowsAffected
 
@@ -257,7 +262,9 @@ class Table:
         for attr in attrPairs:
             self.attributeNames.append(attr[0])
             self.attributeTypes.append(attr[1])
-        self.write_to_file()
+
+        if not self.db.inTransaction :
+            self.write_to_file()
 
     #Need to add select, modify, and delete commands
     #Need to add PA2 commands
@@ -268,6 +275,7 @@ class DB:
     def __init__(self, theName, exists):
         self.name = theName
         self.tables = []#list of table objects
+        self.inTransaction = False;#stores whether or not currently in transaction
 
 #If the database already exists, read in all of its data
 #NEED TO CREATE A METADATA FILE IN THE DIRECTORY OF THE DATABASE
@@ -276,7 +284,7 @@ class DB:
         if exists:
             f = open(self.name + "/" + self.name + ".txt", "r")
             for line in f:
-                self.tables.append(Table(line.strip(), self.name, True))
+                self.tables.append(Table(line.strip(), self.name, True, self))
             f.close()
         else:
             self.addMetaData()
@@ -298,7 +306,7 @@ class DB:
         f.close()
 
         #Now, create the table
-        newTable = Table(tbName, self.name, False)
+        newTable = Table(tbName, self.name, False, self)
         self.tables.append(newTable)
         newTable.initializeAttr(attrPairs)#Should be written to a file
 

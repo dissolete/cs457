@@ -47,6 +47,10 @@ def executeCommand(instr):
         cmdDelete(instr)
     elif instr.primaryInstruction == "exit" :
         cmmdExit(instr)
+    elif instr.primaryInstruction == "begin" :
+        cmmdBeginTrans(instr)
+    elif instr.primaryInstruction == "commit" :
+        cmmdCommit(instr)
 
 #Updated to use db object, most likely functioning
 def cmmdUse(instr) :
@@ -199,3 +203,6 @@ def cmmdExit(instr) :
 def cmmdJoin(instr) :
     database.joinTables(instr.tableUsed, instr.joinTable, instr.leftAlias, instr.rightAlias, instr.whereClause, instr.joinType)
     
+def cmmdBeginTrans(instr) :
+    database.inTransaction = True;
+    database.errorOcurred = False;
