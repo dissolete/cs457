@@ -31,31 +31,34 @@ class Table:
                            '<': operator.lt,
                            '!=': operator.ne
                          }
+        if exists:
+            self.load()
 
-#If the table already exists, read in the data
-        if exists :
+    def load(self):
+        self.attributeTypes.clear()
+        self.attributeNames.clear()
+        self.attributeValues.clear()
 
-            lineNum = 0
-            f = open(self.dbName + "/" + self.tableName + ".txt", "r")
-            for line in f:
+        lineNum = 0
+        f = open(self.dbName + "/" + self.tableName + ".txt", "r")
+        for line in f:
 
-                theLine = line.split()
+            theLine = line.split()
 
-                if lineNum == 0:
-                    #read in the attribute names and types 
-                    for index in range(0, len(theLine), 2):
-                        self.attributeNames.append(theLine[index])
-                        self.attributeTypes.append(theLine[index + 1])
-                else:
-                    newTuple = []
-                    #If not the first line, read in the actual values
-                    for attributeNum in range(0, len(theLine), 1):
-                        newTuple.append(theLine[attributeNum])#append each attr to the tuple
-                    self.attributeValues.append(newTuple)
+            if lineNum == 0:
+                #read in the attribute names and types 
+                for index in range(0, len(theLine), 2):
+                    self.attributeNames.append(theLine[index])
+                    self.attributeTypes.append(theLine[index + 1])
+            else:
+                newTuple = []
+                #If not the first line, read in the actual values
+                for attributeNum in range(0, len(theLine), 1):
+                    newTuple.append(theLine[attributeNum])#append each attr to the tuple
+                self.attributeValues.append(newTuple)
 
-                lineNum += 1
-            f.close()
-
+            lineNum += 1
+        f.close()
 #Use after any modification other than insert
     def write_to_file(self):
         f = open(self.dbName + "/" + self.tableName + ".txt", 'w')
@@ -79,6 +82,8 @@ class Table:
         f.close()
 
     def select(self, attributes, whereClause):
+        self.load()
+
         # The results after the where filter
         results = []
         filteredResults = []
@@ -278,13 +283,14 @@ class Table:
     def check_proceed(self):
         if os.path.isfile(self.dbName + "/" + self.tableName + "_lock.txt"):
             print("Error: Table {} is locked!".format(self.tableName))
-            self.db.errorOccured = True
+            self.db.errorOccurred = True
             return False
         else:
             if self.db.errorOccurred:
                 return False
 
-            os.system("touch {}/{}_lock.txt".format(self.dbName, self.tableName))
+            if self.db.inTransaction:
+                os.system("touch {}/{}_lock.txt".format(self.dbName, self.tableName))
             return True
 
         
@@ -298,7 +304,7 @@ class DB:
         self.name = theName
         self.tables = []#list of table objects
         self.inTransaction = False #stores whether or not currently in transaction
-        self.errorOccured = False
+        self.errorOccurred = False
 
 #If the database already exists, read in all of its data
 #NEED TO CREATE A METADATA FILE IN THE DIRECTORY OF THE DATABASE

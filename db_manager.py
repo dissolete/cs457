@@ -164,10 +164,11 @@ def cmdUpdateTable(instr):
         table = database.getTable(instr.tableUsed)
         if table:
             numRowsUpdated = table.update(instr.updateAttributeName, instr.updateSetToValue, instr.whereClause)
-            if numRowsUpdated > 1 or numRowsUpdated == 0:
-                print("{} records modified.".format(numRowsUpdated))
-            else:
-                print("1 record modified.")
+            if not database.errorOccurred:
+                if numRowsUpdated > 1 or numRowsUpdated == 0:
+                    print("{} records modified.".format(numRowsUpdated))
+                else:
+                    print("1 record modified.")
 def cmdDelete(instr):
     if currDb == "":
         print("!Failed to delete from table since no database is being used.")
@@ -210,10 +211,10 @@ def cmmdBeginTrans(instr) :
 def cmmdCommit(instr) :
     if not database.errorOcurred :
         database.writeAllTables
+        for tb in database.tables :
+            if os.path.isfile(currDb+"/"+tb.tableName + "_lock.txt"):
+                os.remove(currDb + "/" + tb.tableName + "_lock.txt");
     else :
         print("Transaction abort.")
     database.inTransaction = False;
 
-    #Now remove all lock files
-    for tb in database.tables :
-        os.remove(currDb + "/" + tb.tableName + "_lock.txt");
