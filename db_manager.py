@@ -1,7 +1,9 @@
 #Primary Author: Gage Thomas
 #Secondary Author: Jake Shepherd
 #Class: CS 457
-#Date: 3/29/2018
+#Date: 5/8/2018
+#Version 4: Updated for transactions and locks. This file undoes locks and commits
+
 #Version 3: Updated for join support. Select instructions can now be differentiated
 #into standard selects and selects that join two tables.
 

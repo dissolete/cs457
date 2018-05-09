@@ -2,7 +2,10 @@
 #           and writing to files
 #Author - Gage Thomas, Jake Shepherd (secondary)
 #Class: CS 457
-#Date: 3/29/2018
+#Date: 5/8/2018
+#Version 4: Now supports transactions, reupdates data on every select call
+#unless a transaction is now in process.
+
 #Version 2: Now supports join commands. Will properly join two tables on the
 #specified attributes in the where or on clause.
 

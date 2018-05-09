@@ -1,7 +1,11 @@
 # parser.py -- Defines the objects and methods used for parsing the SQL statements
 # Author - Jake Shepherd
 # Class: CS 457
-# Date: 3/29/2018
+# Date: 5/8/2018
+#Version 4: Adding transaction support
+#This version of the parser now can interpret the beginning and end of transactions.
+#Select * is now once again enabled (disabled in version 3)
+
 #Version 3: Adding join support
 #This version of the parser has additional support to identify joins and the type of
 #join being done. Aliases can also be identified. Because of these two features, 
