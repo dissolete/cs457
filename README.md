@@ -1,4 +1,4 @@
-PA3 Design Document
+PA4 Design Document
 
 Organizing Multiple Databases:
 This program organizes multiple databases by storing each database as a directory inside the directory running the program. The name of the database is the name of the directory. Each database directory has a metadata file that stores the names of each table, one table name per line.
@@ -41,7 +41,12 @@ In summary, main.py accepts all input and passes it to the parser. The parser in
 Join Implementation:
 The way this program works, all data is read from the file into the table objects when "use" is called and every time tables are altered, the data is written back into the file (thought the data is still kept in memory, so both are in step). We use a nested loop join algorithm where first the columns in both tables where they are being joined on are identified. Then, the headers for both tables are printed. Finally, each tuple in the left table is iterated through. There is a boolean set to determine if that tuple was matched with anything. At the end of that iteration, if that tuple was not joined with anything and it was a left outer join, that tuple is printed. In any case, each tuple from the left table is then compared with each tuple from the right table (both tables are completely in memory). If their identified attributes match, both tuples are printed on the same line.
 
+Transaction Implementation:
+When a transaction begins, a flag is stored by the DB object. Any time an update command is executed, a lock is put on the table the update is being performed on. This lock is persistent until the transaction is commited. A lock is determined by a {tableName}_lock.txt file. If the file exists in the database, then the table is locked, otherwise the table is unlocked and is free to be updated. This lockfile is checked when updating a table. Due to the nature of this project, since processes are now split, a change to the select implementation has been made. Now, every time a new select is issued, the table is reloaded in case any transactions on other processes modified the table. When a transaction is commited, the locks on any tables the transaction was updating are released. This all ensures that multiple processes can start transactions without any conflict between them -- only one transaction can have the table at a time.  
 
 Running the Program:
 The program can be executed by typing the following command in the directory that contains the code files:
-python3 main.py < PA3_test.sql
+python3 main.py
+
+Running this command puts the user into input mode, where each command needs to be typed. If commands need to be piped, this can be done by executing:
+python3 main.py < inputFile.sql
